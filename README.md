@@ -9,8 +9,7 @@ Ethernet is a widely used networking technology that enables devices to connect 
 # IPv4 Address
 The IPv4 address is a 32-bit numerical identifier assigned to each device connected to a network. It serves as a unique identifier for the device and allows it to send and receive data over an IPv4-based network. The IPv4 address is typically represented in dot-decimal notation (e.g., 192.168.0.1), where each octet represents 8 bits of the address.
 
-# License
-BSD 3-Clause License
+# BSD 3-Clause License
 
 Copyright (c) 2023, Karol Pisarski
 

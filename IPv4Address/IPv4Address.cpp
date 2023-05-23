@@ -5,7 +5,11 @@
  * @version 0.1
  * @date 2023-05-19
  *
- * @copyright Copyright (c) 2023
+ * @note This software is licensed under the BSD 3-Clause License.
+ *       SPDX-License-Identifier: BSD-3-Clause
+ *
+ * @copyright Copyright (c) 2023, Karol Pisarski
+ *            All rights reserved.
  */
 #include "IPv4Address.hpp"
 #include <cstring>
@@ -48,10 +52,11 @@ IPv4Address::IPv4Address(const std::string &cAddressStr)
 		{
 			byteStr += octet;
 		}
-	}
+	} // for (const char &octet : cAddressStr)
+
 	// add last byte to address_bytes
 	_octets[byteCount] = std::stoi(byteStr);
-}
+} /* IPv4Address(const std::string &cAddressStr) */
 
 /**
  * @brief Constructor for the IPv4Address class that accepts four octets as separate parameters.
@@ -66,7 +71,7 @@ IPv4Address::IPv4Address(const uint8_t &cOctet1, const uint8_t &cOctet2, const u
 	_octets[1] = cOctet2;
 	_octets[2] = cOctet3;
 	_octets[3] = cOctet4;
-}
+} /* IPv4Address(const uint8_t &cOctet1, const uint8_t &cOctet2, const uint8_t &cOctet3, const uint8_t &cOctet4) */
 
 /**
  * @brief Converts the IPv4 address to a string representation.
@@ -87,7 +92,7 @@ std::string IPv4Address::ToString() const
 	}
 
 	return result;
-}
+} /* IPv4Address::ToString() */
 
 /**
  * @brief Resets all octets of the IPv4 address to 0.
@@ -96,7 +101,7 @@ void IPv4Address::Clear()
 {
 	for (uint8_t i = 0; i < IP_ADDRESS_OCTETS; i++)
 		_octets[i] = 0;
-}
+} /* IPv4Address::Clear() */
 
 /**
  * @brief Overloads the << operator to enable output of the IPv4 address to an output stream.
@@ -108,7 +113,7 @@ std::ostream &operator<<(std::ostream &os, const IPv4Address &cAddress)
 {
 	os << cAddress.ToString();
 	return os;
-}
+} /* operator<<(std::ostream &os, const IPv4Address &cAddress) */
 
 /**
  * @brief Overloads the != operator to compare two IPv4 addresses for inequality.
@@ -122,7 +127,7 @@ bool IPv4Address::operator!=(const IPv4Address &cIp) const
 		if (_octets[i] != cIp._octets[i])
 			return true;
 	}
-}
+} /* bool IPv4Address::operator!=(const IPv4Address &cIp) const */
 
 /**
  * @brief Overloads the == operator for IPv4Address objects.
@@ -140,19 +145,22 @@ bool IPv4Address::operator==(const IPv4Address &cIp) const
 			return false;
 	}
 	return true;
-}
+} /* bool IPv4Address::operator==(const IPv4Address &cIp) const */
 
-
-IPv4Address& IPv4Address::operator=(const IPv4Address& cIp)
+/**
+ * @brief Assignment operator for IPv4Address class.
+ * This operator assigns the value of another IPv4Address object to the current object.
+ * @param cIp The IPv4Address object to be assigned.
+ * @return A reference to the modified IPv4Address object.
+ */
+IPv4Address &IPv4Address::operator=(const IPv4Address &cIp)
 {
-	if(this == &cIp)	// If they are the same object
+	if (this == &cIp) // If they are the same object
 		return *this;
 
-	// TODO Check if the last octet contains some data
 	memcpy(this->_octets, cIp._octets, IP_ADDRESS_MAX_LENGTH);
 	return *this;
-}
-
+} /* IPv4Address &IPv4Address::operator=(const IPv4Address &cIp) */
 
 /**
  * @brief Returns the octet at the specified index.
@@ -163,7 +171,7 @@ IPv4Address& IPv4Address::operator=(const IPv4Address& cIp)
 uint8_t IPv4Address::getOctet(const uint8_t &cIndex) const
 {
 	return _octets[cIndex];
-}
+} /* IPv4Address::getOctet(const uint8_t &cIndex) const */
 
 /**
  * @brief Sets the octet at the specified index to the specified value.
@@ -174,7 +182,8 @@ uint8_t IPv4Address::getOctet(const uint8_t &cIndex) const
 void IPv4Address::setOctet(const uint8_t &cIndex, const uint8_t &cValue)
 {
 	_octets[cIndex] = cValue;
-}
+} /* IPv4Address::setOctet(const uint8_t &cIndex, const uint8_t &cValue) */
+
 /******************************************************************************
 **********************************End of file**********************************
 ******************************************************************************/

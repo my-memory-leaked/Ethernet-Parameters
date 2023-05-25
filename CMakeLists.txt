@@ -14,6 +14,8 @@ set(SOURCES
     examples.cpp
     IPv4Address/IPv4Address.hpp
     IPv4Address/IPv4Address.cpp
+    IPv6Address/IPv6Address.hpp
+    IPv6Address/IPv6Address.cpp
 )
 add_executable(Ethernet-Parameters ${SOURCES})
 

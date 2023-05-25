@@ -73,6 +73,25 @@ IPv4Address::IPv4Address(const uint8_t &cOctet1, const uint8_t &cOctet2, const u
 	_octets[3] = cOctet4;
 } /* IPv4Address(const uint8_t &cOctet1, const uint8_t &cOctet2, const uint8_t &cOctet3, const uint8_t &cOctet4) */
 
+
+/**
+ * @brief Constructor that creates an IPv4 address from binary data.
+ * @param cBinaryAddress The binary representation of the IPv4 address.
+ */
+IPv4Address::IPv4Address(const std::vector<uint8_t>& cBinaryAddress)
+{
+    if (cBinaryAddress.size() != IP_ADDRESS_OCTETS)
+    {
+        throw std::invalid_argument(INVALID_BINARY_ADDRESS_SIZE);
+    }
+
+    for (uint8_t i = 0; i < IP_ADDRESS_OCTETS; ++i)
+    {
+        _octets[i] = cBinaryAddress[i];
+    }
+}
+
+
 /**
  * @brief Converts the IPv4 address to a string representation.
  * @return A string representation of the IPv4 address.
@@ -93,6 +112,21 @@ std::string IPv4Address::ToString() const
 
 	return result;
 } /* IPv4Address::ToString() */
+
+
+/**
+ * @brief Returns the IPv4 address as binary data.
+ * @return The IPv4 address as binary data.
+ */
+std::vector<uint8_t> IPv4Address::ToBinary() const
+{
+    std::vector<uint8_t> binaryAddress(IP_ADDRESS_OCTETS);
+    for (uint8_t i = 0; i < IP_ADDRESS_OCTETS; ++i)
+    {
+        binaryAddress[i] = _octets[i];
+    }
+    return binaryAddress;
+}
 
 /**
  * @brief Resets all octets of the IPv4 address to 0.
@@ -127,6 +161,7 @@ bool IPv4Address::operator!=(const IPv4Address &cIp) const
 		if (_octets[i] != cIp._octets[i])
 			return true;
 	}
+	return false;
 } /* bool IPv4Address::operator!=(const IPv4Address &cIp) const */
 
 /**

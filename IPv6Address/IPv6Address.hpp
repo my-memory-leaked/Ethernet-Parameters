@@ -46,7 +46,7 @@ public:
     std::string ToString() const;
 
     /// @brief Returns the binary content of the IPv6 address.
-    /// @return The binary content of the IPv6 address as a vector of unsigned chars.
+    /// @return The binary content of the IPv6 address as a vector.
     std::vector<size_t> ToBinary() const;
 
     /// @brief Equality comparison operator.

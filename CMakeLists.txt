@@ -12,12 +12,23 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
 set(SOURCES
     examples.cpp
-    IPv4Address/IPv4Address.hpp
-    IPv4Address/IPv4Address.cpp
-    IPv6Address/IPv6Address.hpp
-    IPv6Address/IPv6Address.cpp
 )
+
+
 add_executable(Ethernet-Parameters ${SOURCES})
+
+# Add folders.
+add_subdirectory(IPv4Address)
+add_subdirectory(IPv6Address)
+
+# Link libraries into project.
+target_link_libraries( ${PROJECT_NAME}
+    IP_V4_LIBRARY
+    IP_V6_LIBRARY
+
+    )
+
+    
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

@@ -71,7 +71,7 @@ IPv6Address::~IPv6Address()
 void IPv6Address::Clear()
 {
     _address.clear();
-}   /* void IPv6Address::Clear() */
+}   /* IPv6Address::Clear() */
 
 /**
  * @brief Converts the IPv6 address to a string representation.
@@ -89,7 +89,7 @@ std::string IPv6Address::ToString() const
         }
     }
     return ss.str();
-}   /* std::string IPv6Address::ToString() */
+}   /* IPv6Address::ToString() */
 
 /**
  * @brief Returns the binary content of the IPv6 address.
@@ -104,7 +104,7 @@ std::vector<size_t> IPv6Address::ToBinary() const
         binaryContent.push_back(static_cast<size_t>(component & 0xFF));
     }
     return binaryContent;
-} /* std::vector<size_t> IPv6Address::ToBinary() */
+} /* IPv6Address::ToBinary() */
 
 /**
  * @brief Equality comparison operator for IPv6Address class.
@@ -114,7 +114,7 @@ std::vector<size_t> IPv6Address::ToBinary() const
 bool IPv6Address::operator==(const IPv6Address &other) const
 {
     return _address == other._address;
-}   /* bool IPv6Address::operator==(const IPv6Address &other) const */
+}   /* IPv6Address::operator==(const IPv6Address &other) const */
 
 /**
  * @brief Inequality comparison operator for IPv6Address class.
@@ -124,7 +124,7 @@ bool IPv6Address::operator==(const IPv6Address &other) const
 bool IPv6Address::operator!=(const IPv6Address &other) const
 {
     return !(*this == other);
-}   /* bool IPv6Address::operator!=(const IPv6Address &other) const */
+}   /* IPv6Address::operator!=(const IPv6Address &other) const */
 
 /**
  * @brief Stream insertion operator for the IPv6Address class.
@@ -136,7 +136,7 @@ bool IPv6Address::operator!=(const IPv6Address &other) const
 std::ostream &operator<<(std::ostream &os, const IPv6Address &cAddress)
 {
     return os << cAddress.ToString();
-}   /* std::ostream &operator<<(std::ostream &os, const IPv6Address &cAddress) */
+}   /* &operator<<(std::ostream &os, const IPv6Address &cAddress) */
 
 /**
  * @brief Assignment operator for the IPv6Address class.
@@ -151,7 +151,7 @@ IPv6Address &IPv6Address::operator=(const IPv6Address &cAddress)
         _address = cAddress._address;
     }
     return *this;
-} /* IPv6Address &IPv6Address::operator=(const IPv6Address &cAddress) */
+} /* &IPv6Address::operator=(const IPv6Address &cAddress) */
 
 /**
  * @brief Parses the IPv6 address string and initializes the address components.
@@ -162,14 +162,15 @@ void IPv6Address::parseIPv6(const std::string &cAddressStr)
     std::stringstream ss(cAddressStr);
     std::string segment{};
     size_t value{};
+    std::stringstream converter {};
 
     while (std::getline(ss, segment, ASCII_COLON))
     {
-        std::stringstream converter(segment);
+        converter = std::stringstream(segment);
         converter >> std::hex >> value;
         _address.push_back(value);
     }
-} /* void IPv6Address::parseIPv6(const std::string &cAddressStr) */
+} /* IPv6Address::parseIPv6(const std::string &cAddressStr) */
 
 /******************************************************************************
 **********************************End of file**********************************

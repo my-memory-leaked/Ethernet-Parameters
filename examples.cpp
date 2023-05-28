@@ -23,8 +23,8 @@ int main(int argc, char **argv)
     //////////////////////////////////////////////////////////////////////////
     // IP v4 address usage examples.
     // Comparison.
-    IPv4Address ipv4Address1("192.168.0.1");
-    IPv4Address ipv4Address2("192.168.0.2");
+    EthernetParameter::IPv4Address ipv4Address1("192.168.0.1");
+    EthernetParameter::IPv4Address ipv4Address2("192.168.0.2");
 
     std::cout << "Comparing addresses:" << std::endl;
     std::cout << "IP v4 address 1: " << ipv4Address1 << std::endl;
@@ -41,7 +41,7 @@ int main(int argc, char **argv)
     std::cout << std::endl;
 
 
-    IPv4Address binaryIpV4Address(binaryIpV4);
+    EthernetParameter::IPv4Address binaryIpV4Address(binaryIpV4);
 
     ipv4Address1 == binaryIpV4Address ? std::cout << "Binary for ip v4 conversion correct!" << std::endl :
                                         std::cout << "Binary conversion for ip v4 error!";
@@ -54,9 +54,9 @@ int main(int argc, char **argv)
     std::string addressStr2 = "2001:0db8:85a3:0000:0000:8a2e:0370:7334";
     std::string addressStr3 = "2001:0db8:85a3:0000:0000:8a2e:0370:7335";
 
-    IPv6Address ipv6Address1(addressStr1);
-    IPv6Address ipv6Address2(addressStr2);
-    IPv6Address ipv6Address3(addressStr3);
+    EthernetParameter::IPv6Address ipv6Address1(addressStr1);
+    EthernetParameter::IPv6Address ipv6Address2(addressStr2);
+    EthernetParameter::IPv6Address ipv6Address3(addressStr3);
 
     std::cout << "IPv6 address 1: " << ipv6Address1.ToString() << std::endl;
     std::cout << "IPv6 address 2: " << ipv6Address2 << std::endl;
@@ -78,7 +78,7 @@ int main(int argc, char **argv)
     std::cout << std::endl;
 
 
-    IPv6Address binaryIpV6Address(binaryIpV6);
+    EthernetParameter::IPv6Address binaryIpV6Address(binaryIpV6);
 
     ipv6Address1 == binaryIpV6 ? std::cout << std::hex << "Binary conversion for ip v6 correct!" << std::endl :
                                  std::cout << "Binary conversion for ip v6 error!";

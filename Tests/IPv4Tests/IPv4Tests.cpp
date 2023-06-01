@@ -14,124 +14,156 @@
 #include <vector>
 #include <sstream>
 
+
 using namespace EthernetParameter;
 
 // Test fixture for IPv4Address tests
-class IPv4AddressTest : public testing::Test
+class IPv4AddressTest : public ::testing::Test
 {
 protected:
-    // Helper function to compare two IPv4 addresses
-    bool CompareIPv4Addresses(const IPv4Address &address1, const IPv4Address &address2)
+    // Test data
+    std::string validAddressStr = "192.168.0.1";
+    std::vector<uint8_t> validBinaryAddress = {0b11000000, 0b10101000, 0b0, 0b00000001};
+
+    IPv4Address validAddress;
+
+    void SetUp() override
     {
-        for (uint8_t i = 0; i < IPv4Address::IP_ADDRESS_OCTETS; i++)
-        {
-            if (address1.GetOctet(i) != address2.GetOctet(i))
-                return false;
-        }
-        return true;
+        // Set up a valid IPv4Address object
+        validAddress = IPv4Address(validAddressStr);
     }
 };
 
-// Test default constructor
+// Test the default constructor
 TEST_F(IPv4AddressTest, DefaultConstructor)
 {
     IPv4Address address;
-    for (uint8_t i = 0; i < IPv4Address::IP_ADDRESS_OCTETS; i++)
-    {
-        EXPECT_EQ(address.GetOctet(i), 0);
-    }
+    // Add assertions to test the default constructor behavior
+    // For example, you can check that all octets are initialized to 0
+    ASSERT_EQ(address.GetOctet(0), 0);
+    ASSERT_EQ(address.GetOctet(1), 0);
+    ASSERT_EQ(address.GetOctet(2), 0);
+    ASSERT_EQ(address.GetOctet(3), 0);
 }
 
-// Test constructor with string representation
+// Test the constructor that accepts a string representation of an IPv4 address
 TEST_F(IPv4AddressTest, StringConstructor)
 {
-    std::string addressStr = "192.168.0.1";
-    IPv4Address address(addressStr);
-    EXPECT_TRUE(address == IPv4Address(192, 168, 0, 1));
+    // Add assertions to test the string constructor behavior
+    IPv4Address ipStrAddr ("192.168.0.1");
+    ASSERT_EQ(ipStrAddr, validAddress);
 }
 
-// Test constructor with separate octets
-TEST_F(IPv4AddressTest, SeparateOctetsConstructor)
+// Test the constructor that accepts four octets as separate parameters
+TEST_F(IPv4AddressTest, FourOctetConstructor)
 {
+    // Create an IPv4Address object using the constructor
     IPv4Address address(192, 168, 0, 1);
-    EXPECT_TRUE(CompareIPv4Addresses(address, IPv4Address("192.168.0.1")));
+    // Add assertions to test the four octet constructor behavior
+    ASSERT_EQ(address.GetOctet(0), 192);
+    ASSERT_EQ(address.GetOctet(1), 168);
+    ASSERT_EQ(address.GetOctet(2), 0);
+    ASSERT_EQ(address.GetOctet(3), 1);
 }
 
-// Test constructor with binary address
-TEST_F(IPv4AddressTest, BinaryAddressConstructor)
+// Test the constructor that accepts binary data
+TEST_F(IPv4AddressTest, BinaryConstructor)
 {
-    std::vector<uint8_t> binaryAddress = {192, 168, 0, 1};
-    IPv4Address address(binaryAddress);
-    EXPECT_TRUE(CompareIPv4Addresses(address, IPv4Address("192.168.0.1")));
+    // Create an IPv4Address object using the constructor
+    IPv4Address address(validBinaryAddress);
+    // Add assertions to test the binary constructor behavior
+    ASSERT_EQ(address.GetOctet(0), 0b11000000);
+    ASSERT_EQ(address.GetOctet(1), 0b10101000);
+    ASSERT_EQ(address.GetOctet(2), 0b0);
+    ASSERT_EQ(address.GetOctet(3), 0b00000001);
 }
 
-// Test ToString method
+// Test the ToString() method
 TEST_F(IPv4AddressTest, ToString)
 {
-    IPv4Address address("192.168.0.1");
-    EXPECT_EQ(address.ToString(), "192.168.0.1");
+    // Add assertions to test the ToString() method
+    ASSERT_EQ(validAddress.ToString(), validAddressStr);
 }
 
-// Test ToBinary method
+// Test the ToBinary() method
 TEST_F(IPv4AddressTest, ToBinary)
 {
-    IPv4Address address("192.168.0.1");
-    std::vector<uint8_t> binaryAddress = address.ToBinary();
-    EXPECT_EQ(binaryAddress, std::vector<uint8_t>({192, 168, 0, 1}));
+    // Add assertions to test the ToBinary() method
+    ASSERT_EQ(validAddress.ToBinary(), validBinaryAddress);
 }
 
-// Test Clear method
+// Test the Clear() method
 TEST_F(IPv4AddressTest, Clear)
 {
-    IPv4Address address("192.168.0.1");
-    address.Clear();
-    for (uint8_t i = 0; i < IPv4Address::IP_ADDRESS_OCTETS; i++)
-    {
-        EXPECT_EQ(address.GetOctet(i), 0);
-    }
+    // Call the Clear() method
+    validAddress.Clear();
+    // Add assertions to test the Clear() method
+    ASSERT_EQ(validAddress.GetOctet(0), 0);
+    ASSERT_EQ(validAddress.GetOctet(1), 0);
+    ASSERT_EQ(validAddress.GetOctet(2), 0);
+    ASSERT_EQ(validAddress.GetOctet(3), 0);
 }
 
-// Test equality operator
+// Test the equality operator (==)
 TEST_F(IPv4AddressTest, EqualityOperator)
 {
-    IPv4Address address1("192.168.0.1");
-    IPv4Address address2("192.168.0.1");
-    EXPECT_EQ(address1, address2);
+    // Create an IPv4Address object with the same address
+    IPv4Address sameAddress(validAddressStr);
+    // Create an IPv4Address object with a different address
+    IPv4Address differentAddress("10.0.0.1");
+    // Add assertions to test the equality operator
+    bool equalityValue = (validAddress == sameAddress);
+    bool inequalityValue = (validAddress == differentAddress);
+    ASSERT_EQ(equalityValue, true);
+    ASSERT_NE(inequalityValue, true);
 }
 
-// Test inequality operator
-TEST_F(IPv4AddressTest, InequalityOperator)
-{
-    IPv4Address address1("192.168.0.1");
-    IPv4Address address2("192.168.0.2");
-    EXPECT_NE(address1, address2);
-}
-
-// Test assignment operator
+// Test the assignment operator (=)
 TEST_F(IPv4AddressTest, AssignmentOperator)
 {
-    IPv4Address address1("192.168.0.1");
-    IPv4Address address2;
-    address2 = address1;
-    EXPECT_EQ(address1, address2);
+    // Create a new IPv4Address object
+    IPv4Address address;
+    // Assign the validAddress to the new object
+    address = validAddress;
+    // Add assertions to test the assignment operator
+    ASSERT_EQ(address.GetOctet(0), validAddress.GetOctet(0));
+    ASSERT_EQ(address.GetOctet(1), validAddress.GetOctet(1));
+    ASSERT_EQ(address.GetOctet(2), validAddress.GetOctet(2));
+    ASSERT_EQ(address.GetOctet(3), validAddress.GetOctet(3));
 }
 
-// Test streaming operator
-TEST_F(IPv4AddressTest, StreamingOperator)
+// Test the GetOctet() method
+TEST_F(IPv4AddressTest, GetOctet)
 {
-    IPv4Address address("192.168.0.1");
+    // Add assertions to test the GetOctet() method
+    ASSERT_EQ(validAddress.GetOctet(0), 192);
+    ASSERT_EQ(validAddress.GetOctet(1), 168);
+    ASSERT_EQ(validAddress.GetOctet(2), 0);
+    ASSERT_EQ(validAddress.GetOctet(3), 1);
+}
+
+// Test the SetOctet() method
+TEST_F(IPv4AddressTest, SetOctet)
+{
+    // Set the octets to new values
+    validAddress.SetOctet(0, 10);
+    validAddress.SetOctet(1, 20);
+    validAddress.SetOctet(2, 30);
+    validAddress.SetOctet(3, 40);
+    // Add assertions to test the SetOctet() method
+    ASSERT_EQ(validAddress.GetOctet(0), 10);
+    ASSERT_EQ(validAddress.GetOctet(1), 20);
+    ASSERT_EQ(validAddress.GetOctet(2), 30);
+    ASSERT_EQ(validAddress.GetOctet(3), 40);
+}
+
+// Test the output operator (<<)
+TEST_F(IPv4AddressTest, OutputOperator)
+{
     std::ostringstream oss;
-    oss << address;
-    EXPECT_EQ(oss.str(), "192.168.0.1");
-}
-
-// Test getOctet and setOctet methods
-TEST_F(IPv4AddressTest, OctetMethods)
-{
-    IPv4Address address("192.168.0.1");
-    EXPECT_EQ(address.GetOctet(0), 192);
-    address.SetOctet(0, 10);
-    EXPECT_EQ(address.GetOctet(0), 10);
+    oss << validAddress;
+    // Add assertions to test the output operator
+    ASSERT_EQ(oss.str(), validAddressStr);
 }
 /******************************************************************************
 **********************************End of file**********************************

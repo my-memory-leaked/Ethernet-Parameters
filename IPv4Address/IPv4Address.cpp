@@ -2,7 +2,7 @@
  * @file IPv4Address.cpp
  * @author Karol Pisarski (karol.pisarski@outlook.com)
  * @brief IPv4Address ethernet parameter class implementation.
- * @version 0.1
+ * @version 0.2
  * @date 2023-05-19
  *
  * @note This software is licensed under the BSD 3-Clause License.

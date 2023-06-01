@@ -205,10 +205,10 @@ namespace EthernetParameter
 	 * @param index The index of the octet to retrieve.
 	 * @return The value of the octet at the specified index.
 	 */
-	uint8_t IPv4Address::getOctet(const uint8_t &cIndex) const
+	uint8_t IPv4Address::GetOctet(const uint8_t &cIndex) const
 	{
 		return _octets[cIndex];
-	} /* IPv4Address::getOctet(const uint8_t &cIndex) const */
+	} /* IPv4Address::GetOctet(const uint8_t &cIndex) const */
 
 	/**
 	 * @brief Sets the octet at the specified index to the specified value.
@@ -216,10 +216,10 @@ namespace EthernetParameter
 	 * @param index The index of the octet to set.
 	 * @param value The value to set the octet to.
 	 */
-	void IPv4Address::setOctet(const uint8_t &cIndex, const uint8_t &cValue)
+	void IPv4Address::SetOctet(const uint8_t &cIndex, const uint8_t &cValue)
 	{
 		_octets[cIndex] = cValue;
-	} /* IPv4Address::setOctet(const uint8_t &cIndex, const uint8_t &cValue) */
+	} /* IPv4Address::SetOctet(const uint8_t &cIndex, const uint8_t &cValue) */
 }
 
 

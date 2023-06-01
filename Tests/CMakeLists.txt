@@ -14,16 +14,22 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
+
 # Create test executable.
-add_executable(${PROJECT_NAME} Tests.cpp)
+add_executable(
+  ${PROJECT_NAME} 
+  Tests.cpp 
+  IPv4Tests.cpp
+  )
+
 
 # Now simply link against gtest or gtest_main as needed.
 target_link_libraries(
     ${PROJECT_NAME} 
     gtest_main
+    IP_V4_LIBRARY
     )
 
-# Tests.
-add_test(NAME MyTests COMMAND ${PARENT_PROJECT_NAME})
-add_test(NAME MyTests2 COMMAND ${PARENT_PROJECT_NAME})
-# include(GoogleTest)
+# # Tests.
+add_test(NAME Ethernet-Parameters-Tests COMMAND ${PROJECT_NAME})
+

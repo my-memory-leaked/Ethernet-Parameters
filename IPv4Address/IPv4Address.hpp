@@ -30,6 +30,9 @@ namespace EthernetParameter
     class IPv4Address
     {
     public:
+        /// @brief Number of IPv4 octets.
+        inline static constexpr uint8_t IP_ADDRESS_OCTETS = 4;
+
         /// @brief Total length (in bytes) of IPv4 address including dots.
         inline static constexpr uint8_t IP_ADDRESS_MAX_LENGTH = 15;
 
@@ -86,20 +89,17 @@ namespace EthernetParameter
         /// @return A reference to the assigned IPv4 address.
         IPv4Address &operator=(const IPv4Address &cIp);
 
-    protected:
         /// @brief Setter for a specific octet.
         /// @param cIndex The index of the octet to set.
         /// @param cValue The value to set for the octet.
-        void setOctet(const uint8_t &cIndex, const uint8_t &cValue);
+        void SetOctet(const uint8_t &cIndex, const uint8_t &cValue);
 
         /// @brief Getter for a specific octet.
         /// @param cIndex The index of the octet to retrieve.
         /// @return The value of the octet at the specified index.
-        uint8_t getOctet(const uint8_t &cIndex) const;
+        uint8_t GetOctet(const uint8_t &cIndex) const;
 
     private:
-        /// @brief Number of IPv4 octets.
-        inline static constexpr uint8_t IP_ADDRESS_OCTETS = 4;
 
         /// @brief IPv4 address container.
         uint8_t _octets[IP_ADDRESS_OCTETS]{};

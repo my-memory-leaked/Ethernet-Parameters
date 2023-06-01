@@ -14,6 +14,7 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
+include_directories(${CMAKE_SOURCE_DIR}/../Ethernet-Parameters)
 
 # Create test executable.
 add_executable(
@@ -28,6 +29,7 @@ target_link_libraries(
     ${PROJECT_NAME} 
     gtest_main
     IP_V4_LIBRARY
+
     )
 
 # # Tests.

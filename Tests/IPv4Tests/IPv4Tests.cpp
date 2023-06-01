@@ -9,7 +9,7 @@
  * 
  */
 #include "IPv4Address/IPv4Address.hpp"
-#include <gtest/gtest.h>
+#include "gtest/gtest.h"
 #include <string>
 #include <vector>
 #include <sstream>

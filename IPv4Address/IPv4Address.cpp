@@ -2,7 +2,7 @@
  * @file IPv4Address.cpp
  * @author Karol Pisarski (karol.pisarski@outlook.com)
  * @brief IPv4Address ethernet parameter class implementation.
- * @version 0.3
+ * @version 0.4
  * @date 2023-05-19
  *
  * @note This software is licensed under the BSD 3-Clause License.
@@ -86,9 +86,9 @@ namespace EthernetParameter
 			std::string byteStr{};
 			uint8_t byteCount{};
 
-			for (const char &octet : cAddressStr)
+			for (const char &cOctet : cAddressStr)
 			{
-				if (octet == DOT)
+				if (cOctet == DOT)
 				{
 					// convert byte_str to int and add to address_bytes
 					_octets[byteCount] = std::stoi(byteStr);
@@ -97,9 +97,9 @@ namespace EthernetParameter
 				}
 				else
 				{
-					byteStr += octet;
+					byteStr += cOctet;
 				}
-			} // for (const char &octet : cAddressStr)
+			} // for (const char &cOctet : cAddressStr)
 
 			// add last byte to address_bytes
 			_octets[byteCount] = std::stoi(byteStr);

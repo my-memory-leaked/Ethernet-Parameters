@@ -2,7 +2,7 @@
  * @file IPv4Address.cpp
  * @author Karol Pisarski (karol.pisarski@outlook.com)
  * @brief IPv4Address ethernet parameter class implementation.
- * @version 0.2
+ * @version 0.3
  * @date 2023-05-19
  *
  * @note This software is licensed under the BSD 3-Clause License.
@@ -38,26 +38,29 @@ namespace EthernetParameter
 	 */
 	IPv4Address::IPv4Address(const std::string &cAddressStr)
 	{
-		std::string byteStr;
-		uint8_t byteCount = 0;
-
-		for (const char &octet : cAddressStr)
+		if (!cAddressStr.empty())
 		{
-			if (octet == DOT)
-			{
-				// convert byte_str to int and add to address_bytes
-				_octets[byteCount] = std::stoi(byteStr);
-				byteStr.clear();
-				byteCount++;
-			}
-			else
-			{
-				byteStr += octet;
-			}
-		} // for (const char &octet : cAddressStr)
+			std::string byteStr{};
+			uint8_t byteCount{};
 
-		// add last byte to address_bytes
-		_octets[byteCount] = std::stoi(byteStr);
+			for (const char &octet : cAddressStr)
+			{
+				if (octet == DOT)
+				{
+					// convert byte_str to int and add to address_bytes
+					_octets[byteCount] = std::stoi(byteStr);
+					byteStr.clear();
+					byteCount++;
+				}
+				else
+				{
+					byteStr += octet;
+				}
+			} // for (const char &octet : cAddressStr)
+
+			// add last byte to address_bytes
+			_octets[byteCount] = std::stoi(byteStr);
+		}
 	} /* IPv4Address(const std::string &cAddressStr) */
 
 	/**
@@ -75,24 +78,22 @@ namespace EthernetParameter
 		_octets[3] = cOctet4;
 	} /* IPv4Address(const uint8_t &cOctet1, const uint8_t &cOctet2, const uint8_t &cOctet3, const uint8_t &cOctet4) */
 
-
 	/**
 	 * @brief Constructor that creates an IPv4 address from binary data.
 	 * @param cBinaryAddress The binary representation of the IPv4 address.
 	 */
-	IPv4Address::IPv4Address(const std::vector<uint8_t>& cBinaryAddress)
+	IPv4Address::IPv4Address(const std::vector<uint8_t> &cBinaryAddress)
 	{
-		if (cBinaryAddress.size() != IP_ADDRESS_OCTETS)
+		if (!cBinaryAddress.empty())
 		{
-			throw std::invalid_argument(INVALID_BINARY_ADDRESS_SIZE);
-		}
+			if (cBinaryAddress.size() != IP_ADDRESS_OCTETS)
+			{
+				throw std::invalid_argument(INVALID_BINARY_ADDRESS_SIZE);
+			}
 
-		for (uint8_t i = 0; i < IP_ADDRESS_OCTETS; ++i)
-		{
-			_octets[i] = cBinaryAddress[i];
+			memcpy(_octets, cBinaryAddress.data(), IP_ADDRESS_OCTETS);
 		}
 	}
-
 
 	/**
 	 * @brief Converts the IPv4 address to a string representation.
@@ -100,21 +101,20 @@ namespace EthernetParameter
 	 */
 	std::string IPv4Address::ToString() const
 	{
-		std::string result{};
-		if (*_octets != NULL)
-		{
-			for (uint8_t i = 0; i < IP_ADDRESS_OCTETS; i++)
-			{
-				result += std::to_string(_octets[i]);
+		std::string ipV4StrRetVal{};
 
-				if (i != 3)
-					result += DOT;
+		for (uint8_t i = 0; i < IP_ADDRESS_OCTETS; i++)
+		{
+			ipV4StrRetVal += std::to_string(_octets[i]);
+
+			if (i != 3)
+			{
+				ipV4StrRetVal += DOT;
 			}
 		}
 
-		return result;
+		return ipV4StrRetVal;
 	} /* IPv4Address::ToString() */
-
 
 	/**
 	 * @brief Returns the IPv4 address as binary data.
@@ -123,10 +123,8 @@ namespace EthernetParameter
 	std::vector<uint8_t> IPv4Address::ToBinary() const
 	{
 		std::vector<uint8_t> binaryAddress(IP_ADDRESS_OCTETS);
-		for (uint8_t i = 0; i < IP_ADDRESS_OCTETS; ++i)
-		{
-			binaryAddress[i] = _octets[i];
-		}
+		memset(binaryAddress.data(), 0, binaryAddress.size());
+		memcpy(binaryAddress.data(), _octets, IP_ADDRESS_OCTETS);
 		return binaryAddress;
 	}
 
@@ -135,8 +133,7 @@ namespace EthernetParameter
 	 */
 	void IPv4Address::Clear()
 	{
-		for (uint8_t i = 0; i < IP_ADDRESS_OCTETS; i++)
-			_octets[i] = 0;
+		memset(_octets, 0, IP_ADDRESS_OCTETS);
 	} /* IPv4Address::Clear() */
 
 	/**
@@ -158,12 +155,7 @@ namespace EthernetParameter
 	 */
 	bool IPv4Address::operator!=(const IPv4Address &cIp) const
 	{
-		for (uint8_t i = 0; i < IP_ADDRESS_OCTETS; i++)
-		{
-			if (_octets[i] != cIp._octets[i])
-				return true;
-		}
-		return false;
+		return memcmp(_octets, cIp._octets, IP_ADDRESS_OCTETS) != 0;
 	} /* bool IPv4Address::operator!=(const IPv4Address &cIp) const */
 
 	/**
@@ -176,12 +168,7 @@ namespace EthernetParameter
 	 */
 	bool IPv4Address::operator==(const IPv4Address &cIp) const
 	{
-		for (uint8_t i = 0; i < IP_ADDRESS_OCTETS; i++)
-		{
-			if (_octets[i] != cIp._octets[i])
-				return false;
-		}
-		return true;
+		return memcmp(_octets, cIp._octets, IP_ADDRESS_OCTETS) == 0;
 	} /* bool IPv4Address::operator==(const IPv4Address &cIp) const */
 
 	/**
@@ -221,7 +208,6 @@ namespace EthernetParameter
 		_octets[cIndex] = cValue;
 	} /* IPv4Address::SetOctet(const uint8_t &cIndex, const uint8_t &cValue) */
 }
-
 
 /******************************************************************************
 **********************************End of file**********************************

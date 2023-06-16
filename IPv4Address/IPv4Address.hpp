@@ -2,7 +2,7 @@
  * @file IPv4Address.hpp
  * @author Karol Pisarski (karol.pisarski@outlook.com)
  * @brief IPv4Address ethernet parameter class definition.
- * @version 0.2
+ * @version 0.3
  * @date 2023-05-19
  *
  * @note This software is licensed under the BSD 3-Clause License.
@@ -31,10 +31,10 @@ namespace EthernetParameter
     {
     public:
         /// @brief Number of IPv4 octets.
-        inline static constexpr uint8_t IP_ADDRESS_OCTETS = 4;
+        static constexpr uint8_t IP_ADDRESS_OCTETS = 4;
 
         /// @brief Total length (in bytes) of IPv4 address including dots.
-        inline static constexpr uint8_t IP_ADDRESS_MAX_LENGTH = 15;
+        static constexpr uint8_t IP_ADDRESS_MAX_LENGTH = 15;
 
         /// @brief Basic constructor.
         IPv4Address();
@@ -100,7 +100,6 @@ namespace EthernetParameter
         uint8_t GetOctet(const uint8_t &cIndex) const;
 
     private:
-
         /// @brief IPv4 address container.
         uint8_t _octets[IP_ADDRESS_OCTETS]{};
 

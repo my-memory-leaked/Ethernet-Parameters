@@ -3,7 +3,7 @@
  * @author Karol Pisarski (karol.pisarski@outlook.com)
  * @brief IPv4Address ethernet parameter class implementation.
  * @version 0.4
- * @date 2023-05-19
+ * @date 2023-06-16
  *
  * @note This software is licensed under the BSD 3-Clause License.
  *       SPDX-License-Identifier: BSD-3-Clause

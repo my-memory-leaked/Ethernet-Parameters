@@ -3,7 +3,7 @@ The Ethernet parameters play a crucial role in establishing network connectivity
 
 I didn't use inheritance in the project because when I need libraries, I take individual files!
 
-Please note that this library may not be memory-efficient, and it is important to consider its usage on microcontrollers or resource-constrained devices. If you intend to use this library on such platforms, it is advisable to carefully assess its memory requirements and consider rewriting or optimizing the code to ensure efficient memory utilization!
+Please note that this library may not be memory-efficient, and it is important to consider its usage on microcontrollers or resource-constrained devices. If you intend to use this library on such platforms, it is advisable to carefully assess its memory requirements and consider rewriting or optimizing the code to ensure efficient memory utilization! Especially, I am using the sstream library that weighs way too much!
 
 # Introduction
 Ethernet is a widely used networking technology that enables devices to connect and communicate within a local area network (LAN). In this project, Ethernet parameters are utilized to store in memory and configure network settings used in network connections.

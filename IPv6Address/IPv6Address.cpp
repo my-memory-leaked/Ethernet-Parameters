@@ -2,8 +2,8 @@
  * @file IPv6Address.cpp
  * @author Karol Pisarski (karol.pisarski@outlook.com)
  * @brief Implementation of the IPv6Address class for representing IPv6 addresses.
- * @version 0.1
- * @date 2023-05-23
+ * @version 0.2
+ * @date 2023-06-17
  *
  * @note This software is licensed under the BSD 3-Clause License.
  *       SPDX-License-Identifier: BSD-3-Clause
@@ -12,7 +12,10 @@
  *            All rights reserved.
  */
 #include "IPv6Address.hpp"
+#include <stdexcept>
 #include <sstream>
+#include <iomanip>
+#include <cstring>
 
 namespace EthernetParameter
 {
@@ -22,114 +25,215 @@ namespace EthernetParameter
      */
     IPv6Address::IPv6Address()
     {
-    } /* IPv6Address() */
+    }
 
     /**
-     * @brief Parameterized constructor for IPv6Address class.
-     * Parses the given IPv6 address string and initializes the IPv6 address.
-     * @param cAddressStr The IPv6 address string to parse and initialize the address.
+     * @brief Constructor that takes a binary content.
+     * @param cBinaryContent A pointer to an array of uint8_t.
+     * The length of the array must be equal to the length of IPv6 address in bytes.
+     * @throw std::invalid_argument if the length of cBinaryContent is invalid or if cBinaryContent is a null pointer.
+     */
+    IPv6Address::IPv6Address(const uint8_t *cBinaryContent)
+    {
+        if (cBinaryContent)
+        {
+            if ((sizeof(cBinaryContent) / sizeof(uint8_t)) == IPV6_ADDRESS_BYTE_LENGTH)
+                memcpy(_ipv6Address, cBinaryContent, IPV6_ADDRESS_BYTE_LENGTH);
+            else
+                throw std::invalid_argument(INVALID_BINARY_CONTENT_SIZE_EXCEPTION_MESSAGE);
+        }
+        else
+        {
+            throw std::invalid_argument(NULL_PTR_EXCEPTION_MESSAGE);
+        }
+    } /* IPv6Address::IPv6Address(const uint8_t *cBinaryContent) */
+
+    /**
+     * @brief Constructor that takes a binary content.
+     * @param cBinaryContent A reference to a vector of uint8_t.
+     * The size of the vector must be equal to the length of IPv6 address in bytes.
+     * @throw std::invalid_argument if the size of cBinaryContent is invalid or if cBinaryContent is empty.
+     */
+    IPv6Address::IPv6Address(const std::vector<uint8_t> &cBinaryContent)
+    {
+        if (!cBinaryContent.empty())
+        {
+            if (cBinaryContent.size() == IPV6_ADDRESS_BYTE_LENGTH)
+                memcpy(_ipv6Address, cBinaryContent.data(), IPV6_ADDRESS_BYTE_LENGTH);
+            else
+                throw std::invalid_argument(INVALID_BINARY_CONTENT_SIZE_EXCEPTION_MESSAGE);
+        }
+        else
+        {
+            throw std::invalid_argument(NULL_PTR_EXCEPTION_MESSAGE);
+        }
+    } /* IPv6Address::IPv6Address(const std::vector<uint8_t> &cBinaryContent) */
+
+    /**
+     * @brief Constructor that takes an IPv6 address string.
+     * @param cAddressCStr A pointer to a null-terminated string that represents an IPv6 address.
+     * @throw std::invalid_argument if cAddressCStr is a null pointer or if it is an empty string or if it is an invalid IPv6 address string.
+     */
+    IPv6Address::IPv6Address(const char *cAddressCStr)
+    {
+        if (cAddressCStr && strlen(cAddressCStr) > 0)
+            ParseIpV6(cAddressCStr);
+        else
+            throw std::invalid_argument(EMPTY_STRING_EXCEPTION_MESSAGE);
+    } /* IPv6Address::IPv6Address(const char *cAddressCStr) */
+
+    /**
+     * @brief Constructor that takes an IPv6 address string.
+     * @param cAddressStr A reference to a string that represents an IPv6 address.
+     * @throw std::invalid_argument if cAddressStr is empty or if it is an invalid IPv6 address string.
      */
     IPv6Address::IPv6Address(const std::string &cAddressStr)
     {
-        parseIPv6(cAddressStr);
-    } /* IPv6Address(const std::string &cAddressStr) */
-
-    /**
-     * @brief Constructor for IPv6Address class that initializes the address using binary data.
-     * @param cBinaryContent The binary content representing the IPv6 address.
-     */
-    IPv6Address::IPv6Address(const std::vector<size_t> &cBinaryContent)
-    {
-        // Ensure that the binary content size is valid for an IPv6 address.
-        if (cBinaryContent.size() != BINARY_IPV6_ADDRESS_LENGTH)
+        if (!cAddressStr.empty())
         {
-            throw std::invalid_argument(INVALID_BINARY_CONTENT_SIZE_ERROR_MESSAGE);
+            if (cAddressStr.length() > 0)
+                ParseIpV6(cAddressStr.c_str());
+            else
+                throw std::invalid_argument(EMPTY_STRING_EXCEPTION_MESSAGE);
         }
-
-        // Clear the existing address components
-        _address.clear();
-
-        size_t component {};
-        // Extract the components from the binary content
-        for (size_t i = 0; i < BINARY_IPV6_ADDRESS_LENGTH; i += 2)
+        else
         {
-            component = (cBinaryContent[i] << BITS_IN_BYTE) | cBinaryContent[i + 1];
-            _address.push_back(component);
+            throw std::invalid_argument(EMPTY_STRING_EXCEPTION_MESSAGE);
         }
-    }   /* IPv6Address(const std::vector<size_t> &cBinaryContent) */
+    } /* IPv6Address::IPv6Address(const std::string &cAddressStr) */
 
     /**
-     * @brief Destructor for IPv6Address class.
-     * Does not perform any specific cleanup tasks.
-     */
-    IPv6Address::~IPv6Address()
-    {
-    }   /* ~IPv6Address() */
-
-    /**
-     * @brief Clears the IPv6 address.
-     * Removes all components of the address, making it empty.
-     */
-    void IPv6Address::Clear()
-    {
-        _address.clear();
-    }   /* IPv6Address::Clear() */
-
-    /**
-     * @brief Converts the IPv6 address to a string representation.
-     * @return The string representation of the IPv6 address.
+     * @brief Returns a string representation of the IPv6 address.
+     * @return A string representation of the IPv6 address.
      */
     std::string IPv6Address::ToString() const
     {
         std::stringstream ss;
-        for (size_t i = 0; i < _address.size(); ++i)
+        ss << std::hex << std::setfill('0');
+        for (int i = 0; i < IPV6_ADDRESS_GROUPS_NUMBER; i++)
         {
-            ss << std::hex << _address[i];
-            if (i != _address.size() - 1)
-            {
-                ss << ASCII_COLON;
-            }
+            ss << std::setw(4) << _ipv6Address[i];
+            if (i < IPV6_ADDRESS_GROUPS_NUMBER - 1)
+                ss << ":";
         }
         return ss.str();
-    }   /* IPv6Address::ToString() */
+    } /* std::string IPv6Address::ToString() const */
 
     /**
-     * @brief Returns the binary content of the IPv6 address.
-     * @return The binary content of the IPv6 address as a vector of bytes.
+     * @brief Copies the IPv6 address to a binary buffer.
+     * @param destDataPtr A pointer to a buffer of uint8_t that will be filled with the IPv6 address.
+     * @throw std::invalid_argument if destDataPtr is a null pointer.
      */
-    std::vector<size_t> IPv6Address::ToBinary() const
+    void IPv6Address::ToBinary(uint8_t *destDataPtr) const
     {
-        std::vector<size_t> binaryContent;
-        for (const auto &component : _address)
+        if (destDataPtr)
         {
-            binaryContent.push_back(static_cast<size_t>((component >> BITS_IN_BYTE) & 0xFF));
-            binaryContent.push_back(static_cast<size_t>(component & 0xFF));
+            uint8_t bytes[2]{};
+            uint16_t group{};
+            for (int i = 0; i < IPV6_ADDRESS_GROUPS_NUMBER; ++i)
+            {
+                group = _ipv6Address[i];
+                memcpy(bytes, &group, sizeof(bytes));
+                *destDataPtr++ = bytes[0];
+                *destDataPtr++ = bytes[1];
+            }
         }
-        return binaryContent;
-    } /* IPv6Address::ToBinary() */
+        else
+            throw std::invalid_argument(NULL_PTR_EXCEPTION_MESSAGE);
+    } /* void IPv6Address::ToBinary(uint8_t *destDataPtr) const */
 
     /**
-     * @brief Equality comparison operator for IPv6Address class.
-     * @param other The IPv6 address to compare with.
+     * @brief Returns the binary representation of the IPv6 address as a vector.
+     * @return A vector of uint8_t that represents the binary representation of the IPv6 address.
+     */
+    std::vector<uint8_t> IPv6Address::ToBinary() const
+    {
+        std::vector<uint8_t> binaryRepresentation;
+        binaryRepresentation.reserve(IPV6_ADDRESS_BYTE_LENGTH);
+        ToBinary(binaryRepresentation.data());
+        return binaryRepresentation;
+    } /* std::vector<uint8_t> IPv6Address::ToBinary() const */
+
+    /**
+     * @brief Sets the IPv6 address from a binary buffer.
+     * @param cBinaryAddress A pointer to a buffer of uint8_t that represents the binary representation of the IPv6 address.
+     * @throw std::invalid_argument if cBinaryAddress is a null pointer.
+     */
+    void IPv6Address::SetFromBinary(const uint8_t *cBinaryAddress)
+    {
+        if (cBinaryAddress)
+        {
+            uint8_t bytes[2]{};
+            uint16_t group;
+            for (int i = 0; i < IPV6_ADDRESS_GROUPS_NUMBER; ++i)
+            {
+                bytes[0] = *cBinaryAddress++;
+                bytes[1] = *cBinaryAddress++;
+                memcpy(&group, bytes, sizeof(group));
+                _ipv6Address[i] = group;
+            }
+        }
+        else
+            throw std::invalid_argument(NULL_PTR_EXCEPTION_MESSAGE);
+    } /* void IPv6Address::SetFromBinary(const uint8_t *cBinaryAddress) */
+
+    /**
+     * @brief Sets the IPv6 address from a binary buffer.
+     * @param cBinaryAddress A reference to a vector of uint8_t that represents the binary representation of the IPv6 address.
+     * @throw std::invalid_argument if the size of cBinaryAddress is invalid or if cBinaryAddress is empty.
+     */
+    void IPv6Address::SetFromBinary(const std::vector<uint8_t> &cBinaryAddress)
+    {
+        if (cBinaryAddress.size() == IPV6_ADDRESS_BYTE_LENGTH)
+        {
+            SetFromBinary(cBinaryAddress.data());
+        }
+        else
+            throw std::invalid_argument(INVALID_BINARY_CONTENT_SIZE_EXCEPTION_MESSAGE);
+    } /* void IPv6Address::SetFromBinary(const std::vector<uint8_t> &cBinaryAddress) */
+
+    /**
+     * @brief Sets all the bytes of the IPv6 address to 0.
+     */
+    void IPv6Address::Clear()
+    {
+        memset(_ipv6Address, 0, IPV6_ADDRESS_BYTE_LENGTH);
+    } /* void IPv6Address::Clear() */
+
+    /**
+     * @brief Copy assignment operator.
+     * @param cAddress The IPv6 address to copy.
+     * @return A reference to the left-hand side object.
+     */
+    IPv6Address &IPv6Address::operator=(const IPv6Address &cAddress)
+    {
+        if (this != &cAddress)
+            memcpy(_ipv6Address, cAddress._ipv6Address, IPV6_ADDRESS_BYTE_LENGTH);
+        return *this;
+    } /* IPv6Address &IPv6Address::operator=(const IPv6Address &cAddress) */
+
+    /**
+     * @brief Equality comparison operator.
+     * @param cAddress The IPv6 address to compare with.
      * @return True if the IPv6 addresses are equal, false otherwise.
      */
-    bool IPv6Address::operator==(const IPv6Address &other) const
+    bool IPv6Address::operator==(const IPv6Address &cAddress) const
     {
-        return _address == other._address;
-    }   /* IPv6Address::operator==(const IPv6Address &other) const */
+        return memcmp(_ipv6Address, cAddress._ipv6Address, IPV6_ADDRESS_BYTE_LENGTH) == 0;
+    } /* bool IPv6Address::operator==(const IPv6Address &cAddress) const */
 
     /**
-     * @brief Inequality comparison operator for IPv6Address class.
-     * @param other The IPv6 address to compare with.
+     * @brief Inequality comparison operator.
+     * @param cAddress The IPv6 address to compare with.
      * @return True if the IPv6 addresses are not equal, false otherwise.
      */
-    bool IPv6Address::operator!=(const IPv6Address &other) const
+    bool IPv6Address::operator!=(const IPv6Address &cAddress) const
     {
-        return !(*this == other);
-    }   /* IPv6Address::operator!=(const IPv6Address &other) const */
+        return memcmp(_ipv6Address, cAddress._ipv6Address, IPV6_ADDRESS_BYTE_LENGTH) != 0;
+    } /* bool IPv6Address::operator!=(const IPv6Address &cAddress) const */
 
     /**
-     * @brief Stream insertion operator for the IPv6Address class.
+     * @brief Stream insertion operator.
      * Inserts the string representation of the IPv6 address into the output stream.
      * @param os The output stream.
      * @param cAddress The IPv6 address to insert into the stream.
@@ -138,41 +242,65 @@ namespace EthernetParameter
     std::ostream &operator<<(std::ostream &os, const IPv6Address &cAddress)
     {
         return os << cAddress.ToString();
-    }   /* &operator<<(std::ostream &os, const IPv6Address &cAddress) */
+    } /* std::ostream &operator<<(std::ostream &os, const IPv6Address &cAddress) */
+
+    //////////////////////////////////////////////////////////////////////////////////////////
+    // Private Methods.
 
     /**
-     * @brief Assignment operator for the IPv6Address class.
-     * Assigns the given IPv6 address to the current instance.
-     * @param cAddress The IPv6 address to assign.
-     * @return The reference to the assigned IPv6 address.
+     * @brief Parses an IPv6 address string and fills the IPv6Address object.
+     * @param cAddressCStr A pointer to a null-terminated string that represents an IPv6 address.
+     * @throw std::invalid_argument if cAddressCStr is an invalid IPv6 address string.
      */
-    IPv6Address &IPv6Address::operator=(const IPv6Address &cAddress)
+    void IPv6Address::ParseIpV6(const char *cAddressCStr)
     {
-        if (this != &cAddress)
-        {
-            _address = cAddress._address;
-        }
-        return *this;
-    } /* &IPv6Address::operator=(const IPv6Address &cAddress) */
+        uint8_t groupIndex = 0;
+        uint16_t value = 0;
+        uint8_t digits = 0;
+        const char *token = cAddressCStr;
 
-    /**
-     * @brief Parses the IPv6 address string and initializes the address components.
-     * @param cAddressStr The IPv6 address string to parse.
-     */
-    void IPv6Address::parseIPv6(const std::string &cAddressStr)
-    {
-        std::stringstream ss(cAddressStr);
-        std::string segment{};
-        size_t value{};
-        std::stringstream converter {};
-
-        while (std::getline(ss, segment, ASCII_COLON))
+        while (groupIndex < IPV6_ADDRESS_GROUPS_NUMBER)
         {
-            converter = std::stringstream(segment);
-            converter >> std::hex >> value;
-            _address.push_back(value);
-        }
-    } /* IPv6Address::parseIPv6(const std::string &cAddressStr) */
+            // Parse each token as a hexadecimal number
+            value = 0;
+            digits = 0;
+
+            while (*token != '\0' && *token != ':')
+            {
+                char c = *token;
+                value <<= 4; // Shift left by 4 bits
+
+                if (c >= '0' && c <= '9')
+                    value |= (c - '0'); // Add the decimal digit
+                else if (c >= 'a' && c <= 'f')
+                    value |= (c - 'a' + 10); // Add the hexadecimal digit (lowercase)
+                else if (c >= 'A' && c <= 'F')
+                    value |= (c - 'A' + 10); // Add the hexadecimal digit (uppercase)
+                else
+                    throw std::invalid_argument(INVALID_IPV6_ADDRESS_EXCEPTION_MESSAGE);
+
+                digits++;
+                token++;
+            } /* while (*token != '\0' && *token != ':')*/
+
+            if (digits == 0 || digits > 4)
+                throw std::invalid_argument(INVALID_IPV6_ADDRESS_EXCEPTION_MESSAGE);
+
+            _ipv6Address[groupIndex] = value;
+            groupIndex++;
+
+            if (*token == '\0')
+                break;
+
+            token++; // Skip the colon
+
+        } /*while (groupIndex < IPV6_ADDRESS_GROUPS_NUMBER)*/
+
+        if (groupIndex != IPV6_ADDRESS_GROUPS_NUMBER || *token != '\0')
+            throw std::invalid_argument(INVALID_IPV6_ADDRESS_EXCEPTION_MESSAGE);
+
+    } /* void IPv6Address::ParseIpV6(const char *cAddressCStr) */
+
 }
 
 /******************************************************************************

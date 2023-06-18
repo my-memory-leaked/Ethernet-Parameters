@@ -17,7 +17,7 @@ FetchContent_MakeAvailable(googletest)
 include_directories(${CMAKE_SOURCE_DIR}/../Ethernet-Parameters)
 
 add_subdirectory(IPv4Tests)
-
+add_subdirectory(IPv6Tests)
 
 # Create test executable.
 add_executable(
@@ -34,3 +34,4 @@ target_link_libraries(
 
 # Tests.
 add_test(NAME Ip-v4-Address-Tests COMMAND IP_V4_LIBRARY_TESTS)
+add_test(NAME Ip-v6-Address-Tests COMMAND IP_V6_LIBRARY_TESTS)

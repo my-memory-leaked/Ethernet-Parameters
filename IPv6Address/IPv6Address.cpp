@@ -37,10 +37,7 @@ namespace EthernetParameter
     {
         if (cBinaryContent)
         {
-            if ((sizeof(cBinaryContent) / sizeof(uint8_t)) == IPV6_ADDRESS_BYTE_LENGTH)
-                memcpy(_ipv6Address, cBinaryContent, IPV6_ADDRESS_BYTE_LENGTH);
-            else
-                throw std::invalid_argument(INVALID_BINARY_CONTENT_SIZE_EXCEPTION_MESSAGE);
+            memcpy(_ipv6Address, cBinaryContent, IPV6_ADDRESS_BYTE_LENGTH);
         }
         else
         {
